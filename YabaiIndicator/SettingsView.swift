@@ -26,6 +26,7 @@ struct SettingsView : View {
                 Picker("Button Style", selection: $buttonStyle) {
                     Text("Numeric").tag(ButtonStyle.numeric)
                     Text("Windows").tag(ButtonStyle.windows)
+                    Text("Mixed").tag(ButtonStyle.mixed)
                 }
             }.padding(10)
                 .tabItem {

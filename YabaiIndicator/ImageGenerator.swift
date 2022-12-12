@@ -85,6 +85,56 @@ func drawWindows(in content: NSRect, windows: [Window], display: Display) {
     }
 }
 
+func generateMixedImage(symbol: NSString, active: Bool, visible: Bool, hasWindows: Bool) -> NSImage {
+    let size = CGSize(width: 24, height: 16)
+    let cornerRadius:CGFloat = 6
+    
+    let canvas = NSRect(origin: CGPoint.zero, size: size)
+    
+    let image = NSImage(size: size)
+    let strokeColor = NSColor.black
+    
+    if active || visible{
+        let imageFill = NSImage(size: size)
+        let imageStroke = NSImage(size: size)
+
+        imageFill.lockFocus()
+        strokeColor.setFill()
+        NSBezierPath(roundedRect: canvas, xRadius: cornerRadius, yRadius: cornerRadius).fill()
+        imageFill.unlockFocus()
+        imageStroke.lockFocus()
+        drawText(symbol: symbol, color: strokeColor, size: size)
+        imageStroke.unlockFocus()
+        
+        image.lockFocus()
+        imageFill.draw(in: canvas, from: NSZeroRect, operation: .sourceOut, fraction: active ? 1.0 : 0.8)
+        imageStroke.draw(in: canvas, from: NSZeroRect, operation: .destinationOut, fraction: active ? 1.0 : 0.8)
+        image.unlockFocus()
+    } else {
+        let imageFill = NSImage(size: size)
+        let imageStroke = NSImage(size: size)
+
+        imageFill.lockFocus()
+        strokeColor.setFill()
+        NSBezierPath(roundedRect: canvas, xRadius: cornerRadius, yRadius: cornerRadius).fill()
+        imageFill.unlockFocus()
+        imageStroke.lockFocus()
+        drawText(symbol: symbol, color: strokeColor, size: size)
+        imageStroke.unlockFocus()
+        
+        image.lockFocus()
+        if hasWindows {
+        imageFill.draw(in: canvas, from: NSZeroRect, operation: .sourceOut, fraction: active ? 1.0 : 0.4)
+        } else {
+        imageFill.draw(in: canvas, from: NSZeroRect, operation: .sourceOut, fraction: active ? 1.0 : 0.1)
+        }
+        imageStroke.draw(in: canvas, from: NSZeroRect, operation: .destinationOut, fraction: active ? 1.0 : 0.8)
+        image.unlockFocus()
+    }
+    image.isTemplate = true
+    return image
+}
+
 func generateImage(active: Bool, visible: Bool, windows: [Window], display: Display) -> NSImage {
     let size = CGSize(width: 24, height: 16)
     let canvas = NSRect(origin: CGPoint.zero, size: size)

@@ -55,6 +55,10 @@ struct WindowSpaceButton : View {
             Image(nsImage: generateImage(active: space.active, visible: space.visible, windows: windows, display: displays[space.display-1])).onTapGesture {
                 switchSpace()
             }.frame(width:24, height: 16)
+            
+            .onAppear {
+                print(windows.first?.title ?? "No window")
+            }
         case .fullscreen:
             Image(nsImage: generateImage(symbol: "F" as NSString, active: space.active, visible: space.visible)).onTapGesture {
                 switchSpace()
@@ -63,6 +67,39 @@ struct WindowSpaceButton : View {
             Divider().background(Color(.systemGray)).frame(height: 14)
         }
     }
+}
+
+struct MixedButton : View {
+    var space: Space
+    var windows: [Window]
+    var displays: [Display]
+    
+    func switchSpace() {
+        if !space.active && space.yabaiIndex > 0 {
+            gYabaiClient.focusSpace(index: space.yabaiIndex)
+        }
+    }
+    
+    func getText() -> String {
+        switch space.type {
+        case .standard:
+            return "\(space.index)"
+        case .fullscreen:
+            return "F"
+        case .divider:
+            return ""
+        }
+    }
+    
+    var body: some View {
+        Image(nsImage: generateMixedImage(symbol: getText() as NSString, active: space.active, visible: space.visible, hasWindows: !windows.isEmpty)).onTapGesture {
+                switchSpace()
+            }.frame(width:24, height: 16)
+            .onAppear {
+                
+            }
+    }
+    
 }
 
 struct ContentView: View {
@@ -97,6 +134,9 @@ struct ContentView: View {
                         SpaceButton(space: space)
                     case .windows:
                         WindowSpaceButton(space: space, windows: spaceModel.windows.filter{$0.spaceIndex == space.yabaiIndex}, displays: spaceModel.displays)
+                        
+                    case .mixed:
+                        MixedButton(space: space, windows: spaceModel.windows.filter{$0.spaceIndex == space.yabaiIndex}, displays: spaceModel.displays)
                     }
                 }
             }

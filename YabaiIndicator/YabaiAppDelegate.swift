@@ -65,7 +65,7 @@ class YabaiAppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func onWindowRefresh() {
-        if UserDefaults.standard.buttonStyle == .windows {
+        if UserDefaults.standard.buttonStyle == .windows || UserDefaults.standard.buttonStyle == .mixed {
             let windows = gYabaiClient.queryWindows()
             DispatchQueue.main.async {
                 self.spaceModel.windows = windows

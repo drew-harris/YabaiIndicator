@@ -11,6 +11,7 @@ import Foundation
 enum ButtonStyle : Int, Identifiable, CaseIterable {
     case numeric
     case windows
+    case mixed
     
     var id: Int { rawValue }
 }
